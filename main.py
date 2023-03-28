@@ -214,7 +214,7 @@ root.config(menu=bar_menu)
 
 # Créer la frame
 frame_button = Frame(root,background=BACKGROUND_COLOR)
-restart = Button(frame_button, text="Recommencer", font=("Consolas",int(GAME_WIDTH * 0.07)), background=SNAKE_COLOR, foreground=BACKGROUND_COLOR,command=restart_game)
+restart = Button(frame_button, text="Recommencer", font="Consolas",background=SNAKE_COLOR, foreground=BACKGROUND_COLOR,command=restart_game)
 restart.pack()
 frame_button.pack(side=BOTTOM,pady=10)
 
