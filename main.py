@@ -9,6 +9,7 @@ SPACE_SIZE = 20
 BODY_PARTS = 3
 SNAKE_COLOR = "#00FF00"
 FOOD_COLOR = "#FF0000"
+TRAP_COLOR = "#0000FF"
 BACKGROUND_COLOR = "#000000"
 FOREGROUND_COLOR = "#00FF00"
 
@@ -24,7 +25,6 @@ class Snake:
             square = canva.create_rectangle(x , y , x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR, tag="snake")
             self.squares.append(square)
 
-
 class Food:
     def __init__(self):
         x = random.randint(0, (GAME_WIDTH / SPACE_SIZE) - 1) * SPACE_SIZE
@@ -32,7 +32,14 @@ class Food:
         self.coordinates = [x,y]
         canva.create_oval(x,y,x + SPACE_SIZE, y + SPACE_SIZE, fill=FOOD_COLOR, tag="food")
 
-def turn(snake, food):
+class Trap:
+    def __init__(self):
+        x = random.randint(0, (GAME_WIDTH / SPACE_SIZE) - 1) * SPACE_SIZE
+        y = random.randint(0, (GAME_HEIGHT / SPACE_SIZE) - 1) * SPACE_SIZE
+        self.coordinates = [x,y]
+        canva.create_rectangle(x,y,x + SPACE_SIZE, y + SPACE_SIZE, fill=TRAP_COLOR, tag="trap")
+
+def turn(snake, food, trap1, trap2, trap3):
     x,y = snake.coordinates[0]
     if direction == "up":
         y -= SPACE_SIZE
@@ -52,14 +59,15 @@ def turn(snake, food):
         subtitle.config(text="Score : {}".format(score))
         canva.delete("food")
         food = Food()
+        spawn_collisions(food, trap1, trap2, trap3)
     else :
         del snake.coordinates[-1]
         canva.delete(snake.squares[-1])
         del snake.squares[-1]
-    if check_collisions(snake):
+    if check_collisions(snake, trap1, trap2, trap3):
         game_over()
     else:
-        root.after(SPEED, turn, snake, food)
+        root.after(SPEED, turn, snake, food, trap1, trap2, trap3)
 
 def change_direction(new_direction):
     global direction
@@ -76,16 +84,34 @@ def change_direction(new_direction):
         if direction != "up":
             direction = new_direction
 
-def check_collisions(snake):
+def check_collisions(snake, trap1, trap2, trap3):
     x,y = snake.coordinates[0]
     if x < 0 or x >= GAME_WIDTH:
         return True
     elif y < 0 or y >= GAME_HEIGHT:
         return True
-    
+    elif x == trap1.coordinates[0] and y == trap1.coordinates[1]:
+        return True
+    elif x == trap2.coordinates[0] and y == trap2.coordinates[1]:
+        return True
+    elif x == trap3.coordinates[0] and y == trap3.coordinates[1]:
+        return True
+
+
     for body_part in snake.coordinates[1:]:
         if x == body_part[0] and y == body_part[1]:
             return True
+
+def spawn_collisions(food, trap1, trap2, trap3):
+    while food.coordinates[0] == trap1.coordinates[0] and food.coordinates[1] == trap1.coordinates[1]:
+        canva.delete("food")
+        food = Food()
+    while food.coordinates[0] == trap2.coordinates[0] and food.coordinates[1] == trap2.coordinates[1]:
+        canva.delete("food")
+        food = Food()
+    while food.coordinates[0] == trap3.coordinates[0] and food.coordinates[1] == trap3.coordinates[1]:
+        canva.delete("food")
+        food = Food()
 
 def game_over():
     global lose
@@ -102,7 +128,10 @@ def restart_game():
         canva.delete(ALL)
         snake = Snake()
         food = Food()
-        turn(snake,food)
+        trap1 = Trap()
+        trap2 = Trap()
+        trap3 = Trap()
+        turn(snake,food,trap1,trap2,trap3)
         lose = False
     else:
         pass
@@ -165,8 +194,12 @@ frame_button.pack(side=BOTTOM,pady=10)
 # Créer le jeu
 snake = Snake()
 food = Food()
+trap1 = Trap()
+trap2 = Trap()
+trap3 = Trap()
+spawn_collisions(food, trap1, trap2, trap3)
 lose = False
-turn(snake,food)
+turn(snake,food,trap1,trap2,trap3)
 
 root.bind('<Up>', lambda event: change_direction('up'))
 root.bind('<Down>', lambda event: change_direction('down'))
