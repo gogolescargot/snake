@@ -126,6 +126,31 @@ def check_collisions(snake, trap1, trap2, trap3, wall):
             return True
 
 def spawn_collisions(food, trap1, trap2, trap3, wall):
+    for i in range (20):
+        while trap1.coordinates[0] == wall.coordinates[i][0] and trap1.coordinates[1] == wall.coordinates[i][1]:
+            canva.delete("trap")
+            trap1 = Trap()
+            trap2 = Trap()
+            trap3 = Trap()
+    for i in range (20):
+        while trap2.coordinates[0] == wall.coordinates[i][0] and trap2.coordinates[1] == wall.coordinates[i][1]:
+            canva.delete("trap")
+            trap1 = Trap()
+            trap2 = Trap()
+            trap3 = Trap()
+    for i in range (20):
+        while trap3.coordinates[0] == wall.coordinates[i][0] and trap3.coordinates[1] == wall.coordinates[i][1]:
+            canva.delete("trap")
+            trap1 = Trap()
+            trap2 = Trap()
+            trap3 = Trap()
+    while trap1.coordinates == trap2.coordinates or trap1.coordinates == trap3.coordinates or trap2.coordinates == trap3.coordinates:
+        canva.delete("trap")
+        trap1 = Trap()
+        trap2 = Trap()
+        trap3 = Trap()
+
+    
     while food.coordinates[0] == trap1.coordinates[0] and food.coordinates[1] == trap1.coordinates[1]:
         canva.delete("food")
         food = Food()
